@@ -1,6 +1,7 @@
 const { updateUserValidation } = require("../middleware/validation");
 const db = require("../database/db");
 const md5 = require("md5");
+const { json } = require("express/lib/response");
 
 exports.updateUser = async (params) => {
   const { error } = updateUserValidation(params);
@@ -8,11 +9,11 @@ exports.updateUser = async (params) => {
 
   const { userId, fullName, email, password } = params;
   const hashedPassword = md5(password.toString());
-
+  
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT * FROM users WHERE user_id = ? AND password = ?`,
-      [userId, hashedPassword],
+      `SELECT * FROM users WHERE id = ?`,
+      [userId],
       (err, result) => {
         if (err) reject({ message: err, statusCode: 500 });
 
@@ -32,15 +33,16 @@ exports.updateUser = async (params) => {
           let query = "";
 
           if (email !== result[0].email && fullName !== result[0].full_name) {
-            query = `full_name = '${fullName}', email = '${email}'`;
+            query = `fullname = '${fullName}', email = '${email}'`;
           } else if (email !== result[0].email) {
             query = `email = '${email}'`;
           } else {
-            query = `full_name = '${fullName}'`;
+            query = `fullname = '${fullName}'`;
           }
+          query += `, password = '${hashedPassword}'`
 
           db.query(
-            `UPDATE users SET ${query} WHERE user_id = ?`,
+            `UPDATE users SET ${query} WHERE id = ?`,
             [userId],
             (err, result) => {
               if (err) throw { message: err, statusCode: 500 };

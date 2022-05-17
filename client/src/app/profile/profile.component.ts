@@ -49,15 +49,17 @@ export class ProfileComponent implements OnInit {
 
   // Update user fields with current details
   ngOnInit(): void {
-    const { user_id, full_name, email } = this._token.getUser();
-    this.userId = user_id;
-    this.user[0].value = full_name;
+    const { id, fullname, email } = this._token.getUser();
+    this.userId = id;
+    this.user[0].value = fullname;
     this.user[1].value = email;
     console.log(this.user);
   }
 
   canUpdate(): boolean {
-    return this.user.filter((field) => field.value.length > 0).length !== 4
+    return this.user.filter((field) => {
+      return field.value.length > 0;
+    }).length !== 4
       ? true
       : false;
   }
@@ -87,7 +89,7 @@ export class ProfileComponent implements OnInit {
             const oldDetails = this._token.getUser();
             this._token.setUser({
               ...oldDetails,
-              full_name: this.user[0].value,
+              fullname: this.user[0].value,
               email: this.user[1].value,
             });
             this.user[2].value = '';

@@ -41,7 +41,7 @@ export class OrderHistoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._api.getTypeRequest(`orders/?userId=${this.user.user_id}`).subscribe(
+    this._api.getTypeRequest(`orders/?userId=${this.user.id}`).subscribe(
       (res: any) => {
         console.log(res);
         res.data.forEach((item) => {
